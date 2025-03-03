@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solidity Contract Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Solidity Contract Generator</h1>
+    <form id="contractForm">
+        <label for="description">Describe what the contract should do:</label><br>
+        <textarea id="description" name="description" rows="5" required></textarea><br>
+        <button type="submit">Generate Contract</button>
+    </form>
+    <h2>Generated Solidity Code:</h2>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('contractForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const description = document.getElementById('description').value;
+            const outputElement = document.getElementById('output');
+
+            try {
+                const response = await fetch('/generate-solidity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        prompt: description,
+                    }),
+                });
+
+                const result = await response.json();
+                if (result.solidity_code) {
+                    outputElement.textContent = result.solidity_code;
+                } else {
+                    outputElement.textContent = `Error: ${result.error}`;
+                }
+            } catch (error) {
+                outputElement.textContent = `An error occurred: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
